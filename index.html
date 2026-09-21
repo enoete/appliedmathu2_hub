@@ -11,13 +11,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#EDF1F0; --card:#FFFFFF; --grid:#D8E0DF;
-  --ink:#12262C; --ink2:#41565D; --ink3:#6B7F85;
-  --wire:#1668D8; --wire-soft:#DEEAFB;
-  --live:#D97706; --live-soft:#FDF0DC;
+  --paper:#EAEFF3; --card:#FFFFFF; --grid:#D2DDE5;
+  --ink:#1B2733; --ink2:#4C5C68; --ink3:#7C8A96;
+  --wire:#C2762A; --wire-soft:#F7E7D3;
+  --live:#0E6E86; --live-soft:#DCF0F4;
   --ok:#0F7A5A; --ok-soft:#DDF0E9;
   --bad:#BC3A2C;
-  --r:4px;
+  --r:2px;
   --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
   --ui:"Space Grotesk",system-ui,-apple-system,sans-serif;
   --serif:"Source Serif 4",Georgia,serif;
@@ -28,12 +28,12 @@ body{
   margin:0; background:var(--paper); color:var(--ink);
   font-family:var(--serif); font-size:17px; line-height:1.6;
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:28px 28px;
+  background-size:22px 22px;
 }
 h1,h2,h3,.ui{font-family:var(--ui)}
 a{color:inherit; text-decoration:none}
 .wrap{max-width:1040px; margin:0 auto; padding:0 20px}
-:focus-visible{outline:3px solid var(--live); outline-offset:2px}
+:focus-visible{outline:3px solid var(--wire); outline-offset:2px}
 
 /* ---------- masthead ---------- */
 .mast{padding:20px 0 0}
@@ -59,26 +59,31 @@ a{color:inherit; text-decoration:none}
 .stat b{font-family:var(--mono); font-size:1.5rem; display:block; line-height:1; color:var(--ink)}
 .stat span{font-size:.78rem; color:var(--ink2); font-family:var(--ui)}
 
-/* hero projectile-motion animation — velocity vector tangent to the flight path */
+/* hero projectile-motion animation — real kinematics: x(s)=x0+Rs (constant vx),
+   y(s)=ground-4H·s(1-s) (vy under constant g). Strobe dots mark equal TIME steps —
+   evenly spaced horizontally, bunching up near the apex, exactly like a strobe photo
+   of a thrown ball. Vector angle at each point is the true atan2(dy/ds, dx/ds). */
 .projviz{flex:0 0 auto; width:170px}
-.pv-frame{border:2px solid var(--ink); border-radius:var(--r); background:var(--card); padding:12px; text-align:center}
-.pv-label{font-family:var(--mono); font-size:.68rem; color:var(--ink3); margin-bottom:8px}
+.pv-frame{border:2px solid var(--ink); border-radius:var(--r); background:var(--card); padding:12px; text-align:center; position:relative}
+.pv-label{font-family:var(--mono); font-size:.66rem; color:var(--ink3); margin-bottom:8px}
 .pv-svg{width:100%; height:auto; display:block}
 .pv-ground{stroke:var(--ink3); stroke-width:1.5; stroke-dasharray:3 3}
-.pv-path{fill:none; stroke:var(--ink); stroke-width:2.5; stroke-linecap:round}
+.pv-path{fill:none; stroke:var(--ink3); stroke-width:1.5; stroke-dasharray:4 4}
+.pv-strobe circle{fill:var(--ink3); opacity:.55}
+.pv-g{font-family:var(--mono); font-size:8.5px; fill:var(--ink3)}
 .pv-vec{stroke:var(--wire); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; fill:none}
 .pv-dot{fill:var(--wire)}
 @media (prefers-reduced-motion:no-preference){
   .pv-rig{animation:launch 3.4s cubic-bezier(.33,0,.2,1) infinite; transform-box:fill-box; transform-origin:center}
 }
 @keyframes launch{
-  0%{transform:translate(20px,116px) rotate(-64.5deg); opacity:0}
+  0%{transform:translate(20px,116px) rotate(-67.4deg); opacity:0}
   6%{opacity:1}
-  25%{transform:translate(65px,38.4px) rotate(-46.4deg)}
+  25%{transform:translate(60px,44px) rotate(-50.2deg)}
   50%{transform:translate(100px,20px) rotate(0deg)}
-  75%{transform:translate(135px,38.4px) rotate(46.4deg)}
-  96%{opacity:1}
-  100%{transform:translate(180px,116px) rotate(64.5deg); opacity:0}
+  75%{transform:translate(140px,44px) rotate(50.2deg)}
+  94%{opacity:1}
+  100%{transform:translate(180px,116px) rotate(67.4deg); opacity:0}
 }
 
 /* ---------- announcement ---------- */
@@ -116,10 +121,13 @@ a{color:inherit; text-decoration:none}
 a.card:hover{transform:translateY(-2px); box-shadow:5px 6px 0 var(--accent,var(--ink))}
 .card .num{
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  background:var(--accent,var(--ink)); color:#fff;
+  background:var(--ink); color:var(--accent,var(--wire));
   font-family:var(--mono); font-weight:700; font-size:1.3rem;
+  position:relative; border-right:3px solid var(--accent,var(--wire));
 }
-.card .num small{display:block; font-size:.55rem; font-weight:500; letter-spacing:.08em; opacity:.85; font-family:var(--ui)}
+.card .num::before,.card .num::after{content:"";position:absolute; width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.3)}
+.card .num::before{top:7px; left:7px} .card .num::after{bottom:7px; right:10px}
+.card .num small{display:block; font-size:.55rem; font-weight:500; letter-spacing:.08em; opacity:.85; font-family:var(--ui); color:#C7D2DA}
 .card .body{padding:18px 20px}
 .card h3{font-size:1.18rem; margin:0 0 6px; font-weight:700; letter-spacing:-.01em}
 .card p{margin:0; color:var(--ink2); font-size:.95rem; font-family:var(--serif)}
@@ -135,16 +143,16 @@ a.card:hover{transform:translateY(-2px); box-shadow:5px 6px 0 var(--accent,var(-
 /* ---------- sticky resources bar ---------- */
 .resbar{position:sticky; top:0; z-index:60; background:var(--ink); border-bottom:2px solid var(--ink)}
 .resbar-in{display:flex; align-items:center; gap:11px; padding:9px 20px}
-.resbar-label{flex:0 0 auto; font-family:var(--mono); font-weight:700; font-size:.74rem; color:#8FD9BB; white-space:nowrap}
+.resbar-label{flex:0 0 auto; font-family:var(--mono); font-weight:700; font-size:.74rem; color:#F0A868; white-space:nowrap}
 .resbar-scroll{display:flex; flex-wrap:wrap; gap:8px 8px; padding:2px 2px 3px; flex:1 1 auto; min-width:0}
 .rchip{
   flex:0 0 auto; display:flex; align-items:baseline; gap:6px; text-decoration:none;
-  background:#1B3138; border:1px solid #2A454D; border-radius:999px; padding:6px 12px;
-  font-size:.82rem; font-weight:500; color:#DDE8EA; white-space:nowrap; font-family:var(--ui);
+  background:#22323F; border:1px solid #344656; border-radius:2px; padding:6px 12px;
+  font-size:.82rem; font-weight:500; color:#E6EDF2; white-space:nowrap; font-family:var(--ui);
   border-left:3px solid var(--accent,var(--wire));
 }
-.rchip:hover{background:#22404A}
-.rchip .k{font-size:.66rem; color:#8FA9AF; font-family:var(--mono)}
+.rchip:hover{background:#2C3F4E}
+.rchip .k{font-size:.66rem; color:#9FB1BE; font-family:var(--mono)}
 
 /* ---------- states ---------- */
 .msg{background:var(--card); border:2px dashed var(--ink3); border-radius:var(--r); padding:32px; text-align:center; color:var(--ink2); font-family:var(--ui)}
@@ -161,7 +169,8 @@ code.stamp{font-family:var(--mono); font-size:.74rem}
   .hero-top{flex-direction:column}
   .projviz{width:130px}
   .card{grid-template-columns:1fr}
-  .card .num{flex-direction:row; gap:6px; padding:8px}
+  .card .num{flex-direction:row; gap:6px; padding:8px; border-right:none; border-bottom:3px solid var(--accent,var(--wire))}
+  .card .num::before,.card .num::after{display:none}
   .resbar-label{display:none}
   .rchip{padding:5px 10px; font-size:.78rem}
 }
@@ -196,10 +205,19 @@ code.stamp{font-family:var(--mono); font-size:.74rem}
     </div>
     <div class="projviz">
       <div class="pv-frame">
-        <div class="pv-label">v &mdash; tangent to the flight path</div>
+        <div class="pv-label">v(t) &mdash; speed &amp; direction, under gravity</div>
         <svg class="pv-svg" viewBox="0 0 200 140" aria-hidden="true">
           <line class="pv-ground" x1="10" y1="116" x2="190" y2="116"/>
           <path class="pv-path" d="M20,116 Q100,-76 180,116"/>
+          <g class="pv-strobe">
+            <circle cx="20" cy="116" r="2"/>
+            <circle cx="52" cy="54.6" r="2"/>
+            <circle cx="84" cy="23.8" r="2"/>
+            <circle cx="116" cy="23.8" r="2"/>
+            <circle cx="148" cy="54.6" r="2"/>
+            <circle cx="180" cy="116" r="2"/>
+          </g>
+          <text class="pv-g" x="190" y="14" text-anchor="end">g&darr;</text>
           <g class="pv-rig">
             <path class="pv-vec" d="M-6,0 L20,0 M13,-6 L20,0 L13,6"/>
             <circle class="pv-dot" r="4"/>
